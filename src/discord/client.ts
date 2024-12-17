@@ -1,12 +1,9 @@
 import { GatewayIntentBits, Events, Collection } from "discord.js";
 
 import Client from "../types/client";
-import Command from "../types/command"
-import { handleChatInputCommand } from "./handlers/chatInputCommand"
 
-async function loadCommands() {
-    return new Collection<string, Command>();
-}
+import { loadCommands } from "../utils/files"
+import { handleChatInputCommand } from "./handlers/chatInputCommand"
 
 export async function initClient() {
     const client = new Client({
