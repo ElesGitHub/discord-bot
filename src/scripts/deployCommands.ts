@@ -9,7 +9,8 @@ async function deploy() {
     const rest = new REST().setToken(config.DISCORD_TOKEN);
 
     try {
-        console.log(`Re-uploading ${commands.length} commands`);
+        console.log(`Re-uploading ${commands.length} commands:`);
+        commands.forEach(command => console.log(`\t- ${command.name}`))
 
         await rest.put(
             Routes.applicationGuildCommands(
@@ -21,7 +22,7 @@ async function deploy() {
 
         console.log(`Successfully re-uploaded ${commands.length} commands`);
     } catch (error) {
-        console.error
+        console.error(error);
     }
 }
 
