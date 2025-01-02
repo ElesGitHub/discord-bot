@@ -12,14 +12,16 @@ import {
   createAudioResourceFromYoutube,
   playAudioResource,
 } from "../../actions/audio";
+import { isUrl } from "../../../network/urls";
+import { isValidYoutubeUrl, searchYoutube } from "../../../network/youtube";
 
 export const data = new SlashCommandBuilder()
   .setName("play")
   .setDescription("Joins your voice chat and plays the given video.")
   .addStringOption(
     new SlashCommandStringOption()
-      .setName("url")
-      .setDescription("The video you want to play.")
+      .setName("input")
+      .setDescription("The name or url of the video you want to play.")
       .setRequired(true)
       .setAutocomplete(false)
   )
@@ -45,10 +47,18 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     return;
   }
 
-  const url = interaction.options.getString("url", true);
-  await interaction.reply(`Playing ${url}`);
+  const input = interaction.options.getString("input", true);
+  let url;
 
-  console.log("About to play audio");
+  if (!isUrl(input)) url = await searchYoutube(input);
+  else if (!(await isValidYoutubeUrl(input))) url = null;
+  else url = input;
+
+  if (!url) {
+    await interaction.reply("Could not find the video");
+    return;
+  }
+  await interaction.reply(`Playing ${url}`);
 
   const resource = createAudioResourceFromYoutube(url);
   playAudioResource(resource, interaction.guild);
