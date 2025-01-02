@@ -42,3 +42,8 @@ export function createAudioResourceFromYoutube(url: string) {
     inputType: StreamType.Raw,
   });
 }
+
+// TODO Function to start listening to a user given its id
+// TODO Function to stop recording
+
+// https://www.reddit.com/r/Discordjs/comments/102x6ww/how_to_record_voice_channels_v14/

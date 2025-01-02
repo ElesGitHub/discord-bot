@@ -2,10 +2,25 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const { DISCORD_TOKEN, DISCORD_CLIENT_ID, DISCORD_GUILD_ID } = process.env;
+const {
+  DISCORD_TOKEN,
+  DISCORD_CLIENT_ID,
+  DISCORD_GUILD_ID,
+  GOOGLE_CLOUD_API_KEY,
+} = process.env;
 
-if (!DISCORD_TOKEN || !DISCORD_CLIENT_ID || !DISCORD_GUILD_ID) {
+if (
+  !DISCORD_TOKEN ||
+  !DISCORD_CLIENT_ID ||
+  !DISCORD_GUILD_ID ||
+  !GOOGLE_CLOUD_API_KEY
+) {
   throw new Error("Missing enviroment variables");
 }
 
-export default { DISCORD_TOKEN, DISCORD_CLIENT_ID, DISCORD_GUILD_ID };
+export default {
+  DISCORD_TOKEN,
+  DISCORD_CLIENT_ID,
+  DISCORD_GUILD_ID,
+  GOOGLE_CLOUD_API_KEY,
+};
