@@ -1,29 +1,39 @@
-import { REST, Routes } from "discord.js";
+import { Client, REST, Routes } from "discord.js";
 import { loadCommands } from "../utils/files";
 import config from "../config/config";
+import { initClient } from "../discord/client";
+import { RESTPostAPIChatInputApplicationCommandsJSONBody } from "discord.js";
 
-async function deploy() {
-    const commandCollection = await loadCommands();
-    const commands = commandCollection.map(command => command.data.toJSON());
+async function update() {
+  const commandCollection = await loadCommands();
+  const commands = commandCollection.map((command) => command.data.toJSON());
 
-    const rest = new REST().setToken(config.DISCORD_TOKEN);
+  const rest = new REST().setToken(config.DISCORD_TOKEN);
 
-    try {
-        console.log(`Re-uploading ${commands.length} commands:`);
-        commands.forEach(command => console.log(`\t- ${command.name}`))
-
-        await rest.put(
-            Routes.applicationGuildCommands(
-                config.DISCORD_CLIENT_ID,
-                config.DISCORD_GUILD_ID
-            ),
-            { body: commands }
-        );
-
-        console.log(`Successfully re-uploaded ${commands.length} commands`);
-    } catch (error) {
-        console.error(error);
-    }
+  const client = await initClient();
+  client.on("ready", async () => {
+    await deployCommands(client, rest, commands);
+    client.destroy();
+  });
+  client.login(config.DISCORD_TOKEN);
 }
 
-deploy();
+async function deployCommands(
+  client: Client,
+  rest: REST,
+  commands: RESTPostAPIChatInputApplicationCommandsJSONBody[]
+) {
+  const guilds = client.guilds.cache.map((guild) => guild.id);
+  console.log(
+    `[INFO] Updating ${commands.length} commands for ${guilds.length} guilds.`
+  );
+  const promises = guilds.map((guild) => {
+    rest.put(Routes.applicationGuildCommands(config.DISCORD_CLIENT_ID, guild), {
+      body: commands,
+    });
+  });
+  await Promise.all(promises);
+  console.log("[INFO] Succesfully updated commands.");
+}
+
+update();
