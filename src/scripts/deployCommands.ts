@@ -27,11 +27,13 @@ async function deployCommands(
   console.log(
     `[INFO] Updating ${commands.length} commands for ${guilds.length} guilds.`
   );
+
   const promises = guilds.map((guild) => {
     rest.put(Routes.applicationGuildCommands(config.DISCORD_CLIENT_ID, guild), {
       body: commands,
     });
   });
+
   await Promise.all(promises);
   console.log("[INFO] Succesfully updated commands.");
 }
